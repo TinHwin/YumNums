@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "994224366854",
+    "project_id": "yumnums-b052a",
+    "storage_bucket": "yumnums-b052a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:994224366854:android:66c34fed5efa6400bb6a87",
+        "android_client_info": {
+          "package_name": "com.tinhwin.mealplanningapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "994224366854-mp7srt9vj829bbhninfc92c5mei8i2og.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqjH05qEdqjazCt1hhKnJxRznLaf-ZJvc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "994224366854-cahbi7p9tbfnsagnb7940c3f59jh21nt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "994224366854-j6i2jc940repracahjkpn2tf5j48thre.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.tinhwin.mealplanningapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
