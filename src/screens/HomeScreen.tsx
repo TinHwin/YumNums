@@ -14,13 +14,23 @@ import {
     Settings,
 } from 'lucide-react-native';
 
+import PieChart from 'react-native-pie-chart';
+
 import { useAuthContext } from '../contexts/AuthContext';
+import { useUserGoalsAndPreferencesContext } from '../contexts/UserGoalsAndPreferencesContext';
 
 const HomeScreen = () => {
     const navigation = useNavigation()
     let SettingsComponent = Settings;
 
     const { user, loading } = useAuthContext();
+
+    const todayBudgetSeries = [
+        { value: 12, color: '#fbd203'},
+        { value: 24, color: '#ffb300'},
+        { value: 15, color: '#ff9100'},
+    ]
+
     return (
         <ScrollView style={homeStyles.screenStyle}>
             <View style={homeStyles.profileContainer}>
@@ -51,6 +61,10 @@ const HomeScreen = () => {
                         >Edit Goals & Preferences</Text>
                     </TouchableOpacity>
                 </View>
+            </View>
+            <View style={homeStyles.todayBudgetAndCaloriesContainerStyle}>
+                <PieChart widthAndHeight={140} series={todayBudgetSeries}/>
+                <PieChart widthAndHeight={140} series={todayBudgetSeries}/>
             </View>
         </ScrollView>
     );
@@ -98,6 +112,9 @@ const homeStyles = StyleSheet.create({
     profileEditGoalsandPreferencesTextStyle: {
         color: 'white',
         fontWeight: 500,
+    },
+    todayBudgetAndCaloriesContainerStyle: {
+        flexDirection: 'row'
     }
 });
 
