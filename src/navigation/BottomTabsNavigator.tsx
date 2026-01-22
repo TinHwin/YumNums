@@ -20,6 +20,7 @@ import {
 import { useAuthContext } from '../contexts/AuthContext';
 
 import UserGoalsAndPreferencesScreen from '../screens/UserGoalsAndPreferencesScreen';
+import RecipeInstructionsAndNutritionScreen from '../screens/RecipeInstructionsAndNutrition';
 
 const HomeStack = createNativeStackNavigator();
 
@@ -29,10 +30,10 @@ function HomeStackNavigator() {
     let LogOutcomponent = LogOut;
 
     return (
-        <HomeStack.Navigator 
+        <HomeStack.Navigator
             initialRouteName='Home'
         >
-            
+
             <HomeStack.Screen
                 name='Home'
                 component={HomeScreen}
@@ -62,7 +63,7 @@ function HomeStackNavigator() {
                         </TouchableOpacity>
                     )
                 }}
-                
+
             />
             <HomeStack.Screen
                 name='Goals & Preferences'
@@ -76,11 +77,42 @@ function HomeStackNavigator() {
             />
         </HomeStack.Navigator>
     );
-}
+};
+
+const RecipeSearchStack = createNativeStackNavigator();
+
+function RecipeSearchStackNavigator() {
+    return (
+        <RecipeSearchStack.Navigator
+            initialRouteName='Recipe Search'
+        >
+            <RecipeSearchStack.Screen
+                name='Recipe Search'
+                component={RecipeSearchScreen}
+                options={{
+                    headerTintColor: 'white',
+                    headerTitleAlign: 'center',
+                    headerShadowVisible: false,
+                    headerStyle: bottomTabsStyles.headerStyle,
+                }}
+            />
+            <RecipeSearchStack.Screen
+                name='Recipe Instructions & Nutrition'
+                component={RecipeInstructionsAndNutritionScreen}
+                options={{
+                    headerTintColor: 'white',
+                    headerTitleAlign: 'center',
+                    headerShadowVisible: false,
+                    headerStyle: bottomTabsStyles.headerStyle,
+                }}
+            />
+        </RecipeSearchStack.Navigator>
+    );
+};
 
 const Tab = createBottomTabNavigator();
 
-function BottomTabsNavigator() {    
+function BottomTabsNavigator() {
     return (
         <Tab.Navigator
             initialRouteName='Home'
@@ -88,7 +120,7 @@ function BottomTabsNavigator() {
                 tabBarIcon: ({ color, size }) => {
                     let IconComponent;
 
-                    switch(route.name) {
+                    switch (route.name) {
                         case "Meal Plan":
                             IconComponent = Calendar;
                             break;
@@ -115,7 +147,7 @@ function BottomTabsNavigator() {
                 tabBarItemStyle: bottomTabsStyles.tabBarItemStyle,
             })}
         >
-            <Tab.Screen 
+            <Tab.Screen
                 name="Meal Plan"
                 component={MealPlanScreen}
             />
@@ -129,7 +161,7 @@ function BottomTabsNavigator() {
             />
             <Tab.Screen
                 name="Recipe Search"
-                component={RecipeSearchScreen}
+                component={RecipeSearchStackNavigator}
             />
             <Tab.Screen
                 name="Ask AI"

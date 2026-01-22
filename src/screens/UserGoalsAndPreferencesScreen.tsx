@@ -188,7 +188,7 @@ const UserGoalsAndPreferencesScreen = () => {
             unFillColor='white'
             fillColor='black'
             size={24}
-            isChecked={diets.lowFODMAP}
+            isChecked={diets.lowFodmap}
             onPress={() => toggleDiet('lowFODMAP')}
           />
           <Text style={UserGoalsAndPreferencesScreenStyles.dietDescriptionStyle}>

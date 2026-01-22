@@ -18,7 +18,7 @@ export const UserGoalsAndPreferencesProvider = ({ children }: { children: React.
         pescetarian: false,
         paleo: false,
         primal: false,
-        lowFODMAP: false,
+        lowFodmap: false,
         whole30: false,
     });
     const [intolerances, setIntolerances] = useState<Intolerances>({
@@ -90,7 +90,7 @@ export const UserGoalsAndPreferencesProvider = ({ children }: { children: React.
         <UserGoalsAndPreferencesContext.Provider
             value={{ weeklyBudget, setWeeklyBudget, weeklyCalories, setWeeklyCalories, diets, toggleDiet, intolerances, toggleIntolerance }}
         >
-            {children}
+            { children }
         </UserGoalsAndPreferencesContext.Provider>
     )
 }

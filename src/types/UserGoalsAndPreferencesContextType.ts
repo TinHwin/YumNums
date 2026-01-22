@@ -8,7 +8,7 @@ export interface Diets {
     pescetarian: boolean;
     paleo: boolean;
     primal: boolean;
-    lowFODMAP: boolean;
+    lowFodmap: boolean;
     whole30: boolean;
 }
 

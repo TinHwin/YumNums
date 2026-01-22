@@ -14,6 +14,7 @@ import {
   Eye,
   EyeOff
 } from 'lucide-react-native';
+
 import { useAuthContext } from '../contexts/AuthContext';
 
 const LogInScreen = () => {
