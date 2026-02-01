@@ -22,6 +22,7 @@ import {
   Timer,
   Flame,
   ThumbsUp,
+  Heart,
   PiggyBank,
   Beef,
   Wheat,
@@ -41,6 +42,7 @@ const RecipeSearchScreen = () => {
   let TimerIconComponent = Timer;
   let FlameIconComponent = Flame;
   let ThumbsUpIconComponent = ThumbsUp;
+  let HeartIconComponent = Heart;
   let PiggyBankIconComponent = PiggyBank;
   let BeefIconComponent = Beef;
   let WheatIconComponent = Wheat;
@@ -64,7 +66,7 @@ const RecipeSearchScreen = () => {
     try {
       const complexSearchRecipesResults = await fetchComplexSearchRecipes(search);
 
-      if (complexSearchRecipesResults) {
+      if (complexSearchRecipesResults && complexSearchRecipesResults.length > 0) {
         console.log('Fetch Return: ', complexSearchRecipesResults);
         setSearchRecipes(complexSearchRecipesResults);
       }
@@ -91,11 +93,15 @@ const RecipeSearchScreen = () => {
               {recipe.title}
             </Text>
             <View style={RecipeSearchStyle.recipeLikesContainerStyle}>
-              <ThumbsUpIconComponent size={16} color={'white'} />
+              <ThumbsUpIconComponent size={16} color={'cornflowerblue'} />
               <Text style={RecipeSearchStyle.recipeLikesTextStyle}>
                 {recipe.aggregateLikes ?? 0}
               </Text>
               <Text style={RecipeSearchStyle.recipeLikesTextStyle}>likes</Text>
+            </View>
+            <View style={RecipeSearchStyle.recipeSaveContainerStyle}>
+              <HeartIconComponent size={24} color={'white'} />
+              <Text style={RecipeSearchStyle.recipeSaveTextStyle}>Save</Text>
             </View>
           </View>
           <View style={RecipeSearchStyle.recipeAddButtonContainerStyle}>
@@ -189,7 +195,7 @@ const RecipeSearchScreen = () => {
         <View style={RecipeSearchStyle.recipeFooterButtonsContainerStyle}>
           <TouchableOpacity style={RecipeSearchStyle.recipeInstructionsButtonContainerStyle}>
             <BookIconComponent size={24} color={'white'} />
-            <Text 
+            <Text
               onPress={() => navigation.navigate('Recipe Instructions & Nutrition', { recipe })}
               style={RecipeSearchStyle.recipeInstructionsButtonTextStyle}>
               Instructions
@@ -297,13 +303,23 @@ const RecipeSearchStyle = StyleSheet.create({
   },
   recipeLikesContainerStyle: {
     flexDirection: 'row',
-    backgroundColor: 'cornflowerblue',
     alignItems: 'center',
-    padding: 5,
+    padding: 10,
     gap: 5,
     borderRadius: 10
   },
   recipeLikesTextStyle: {
+    color: 'black'
+  },
+  recipeSaveContainerStyle: {
+    flexDirection: 'row',
+    backgroundColor: 'tomato',
+    alignItems: 'center',
+    padding: 10,
+    gap: 5,
+    borderRadius: 10
+  },
+  recipeSaveTextStyle: {
     color: 'white'
   },
   recipeAddButtonContainerStyle: {
