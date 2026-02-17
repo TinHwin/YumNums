@@ -13,7 +13,7 @@ export const RecipeContext = createContext<RecipeContextType | undefined>(undefi
 export const RecipeProvider = ({ children }: { children: React.ReactNode }) => {
     const { diets, intolerances } = useUserGoalsAndPreferencesContext();
 
-    const [savedRecipes, setSavedRecipes] = useState<Recipe[]>([]);
+    const [plannedRecipes, setPlannedRecipes] = useState<Record<number, Recipe>>({});
 
     const combineDietsParam = () => {
         const dietsMap: Record<keyof Diets, string> = {
@@ -99,16 +99,51 @@ export const RecipeProvider = ({ children }: { children: React.ReactNode }) => {
             return data.results ?? [];
         } catch (error) {
             console.error("Fetch failed:", error);
-            
+
             return [];
         }
     }
 
+    useEffect(() => {
+        const loadPlannedRecipes = async () => {
+            try {
+                const storedPlannedRecipes = await AsyncStorage.getItem('plannedRecipes');
+
+                if (storedPlannedRecipes) setPlannedRecipes(JSON.parse(storedPlannedRecipes));
+            } catch (error) {
+                console.log('Error loading planned recipes:', error);
+            }
+        };
+
+        loadPlannedRecipes();
+    }, []);
+
+    useEffect(() => {
+        const storedPlannedRecipes = async () => {
+            try {
+                await AsyncStorage.setItem('plannedRecipes', JSON.stringify(plannedRecipes));
+            } catch (error) {
+                console.log('Error saving planned recipes: ', error);
+            }
+        };
+
+        storedPlannedRecipes();
+    }, [plannedRecipes]);
+
+    const addRecipe = (recipe: Recipe) => {
+        setPlannedRecipes(prev => ({
+            ...prev,
+            [recipe.id]: recipe
+        }));
+
+        console.log('planned recipes:', plannedRecipes);
+    };
+
     return (
         <RecipeContext.Provider
-            value={{ savedRecipes, setSavedRecipes, fetchComplexSearchRecipes }}
+            value={{ plannedRecipes, setPlannedRecipes, addRecipe, fetchComplexSearchRecipes }}
         >
-            { children }
+            {children}
         </RecipeContext.Provider>
     )
 }

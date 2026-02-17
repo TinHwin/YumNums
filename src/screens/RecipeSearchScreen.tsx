@@ -8,51 +8,49 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
+  Modal,
+  Button
 } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
-import {
-  Search,
-  X,
-  Soup,
-  Book,
-  ChartColumnIncreasing,
-  CirclePlus,
-  Timer,
-  Flame,
-  ThumbsUp,
-  Heart,
-  PiggyBank,
-  Beef,
-  Wheat,
-  Hamburger,
-} from 'lucide-react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import { Recipe } from '../types/RecipeContextType';
 import { useRecipeContext } from '../contexts/RecipeContext';
 
-const RecipeSearchScreen = () => {
-  let SearchIconComponent = Search;
-  let XIconComponent = X;
-  let SoupIconComponent = Soup;
-  let BookIconComponent = Book;
-  let ChartColumnIncreasingIconComponent = ChartColumnIncreasing;
-  let CirclePlusIconComponent = CirclePlus;
-  let TimerIconComponent = Timer;
-  let FlameIconComponent = Flame;
-  let ThumbsUpIconComponent = ThumbsUp;
-  let HeartIconComponent = Heart;
-  let PiggyBankIconComponent = PiggyBank;
-  let BeefIconComponent = Beef;
-  let WheatIconComponent = Wheat;
-  let HamburgerIconComponent = Hamburger;
+import SafeAreaScreen from '../components/layouts/SafeAreaScreen';
+import Icon from '../components/icons/Icon';
+import { Colors } from '../styles/themes/colors';
+import { Spacing } from '../styles/themes/spacing';
+import { Radius } from '../styles/themes/radius';
 
-  const { fetchComplexSearchRecipes, savedRecipes, setSavedRecipes } = useRecipeContext();
+import { RecipeCard } from '../components/RecipeCard';
+
+const RecipeSearchScreen = () => {
+  const { fetchComplexSearchRecipes } = useRecipeContext();
 
   const [search, setSearch] = useState('');
   const [searchRecipes, setSearchRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const loadSearchRecipes = async () => {
+      try {
+        const storedSearchRecipes = await AsyncStorage.getItem('searchRecipes');
+
+        if (storedSearchRecipes) setSearchRecipes(JSON.parse(storedSearchRecipes));
+      } catch (error) {
+        console.error('Failed to load search recipes from AsyncStorage', error);
+      }
+    };
+
+    loadSearchRecipes();
+  }, []);
+
+  useEffect(() => {
+    AsyncStorage.setItem('searchRecipes', JSON.stringify(searchRecipes));
+  }, [searchRecipes]);
 
   const handleClearSearchBar = () => {
     setSearch('');
@@ -69,6 +67,7 @@ const RecipeSearchScreen = () => {
       if (complexSearchRecipesResults && complexSearchRecipesResults.length > 0) {
         console.log('Fetch Return: ', complexSearchRecipesResults);
         setSearchRecipes(complexSearchRecipesResults);
+
       }
     } catch (error) {
 
@@ -77,151 +76,13 @@ const RecipeSearchScreen = () => {
     }
   }
 
-  const RecipeComponent = ({ recipe }: { recipe: Recipe }) => {
-    const navigation = useNavigation()
-
-    const calories = recipe.nutrition?.nutrients?.find(nutrient => nutrient.name === 'Calories');
-    const protein = recipe.nutrition?.nutrients?.find(nutrient => nutrient.name === 'Protein');
-    const carbs = recipe.nutrition?.nutrients?.find(nutrient => nutrient.name === 'Carbohydrates');
-    const fat = recipe.nutrition?.nutrients?.find(nutrient => nutrient.name === 'Fat');
-
-    return (
-      <View style={RecipeSearchStyle.recipeSearchResultContainerStyle}>
-        <View style={RecipeSearchStyle.recipeHeaderContainerStyle}>
-          <View style={RecipeSearchStyle.recipeTitleContainerStyle}>
-            <Text style={RecipeSearchStyle.recipeTitleStyle}>
-              {recipe.title}
-            </Text>
-            <View style={RecipeSearchStyle.recipeLikesContainerStyle}>
-              <ThumbsUpIconComponent size={16} color={'cornflowerblue'} />
-              <Text style={RecipeSearchStyle.recipeLikesTextStyle}>
-                {recipe.aggregateLikes ?? 0}
-              </Text>
-              <Text style={RecipeSearchStyle.recipeLikesTextStyle}>likes</Text>
-            </View>
-            <View style={RecipeSearchStyle.recipeSaveContainerStyle}>
-              <HeartIconComponent size={24} color={'white'} />
-              <Text style={RecipeSearchStyle.recipeSaveTextStyle}>Save</Text>
-            </View>
-          </View>
-          <View style={RecipeSearchStyle.recipeAddButtonContainerStyle}>
-            <CirclePlusIconComponent size={24} color={'white'} />
-            <Text style={RecipeSearchStyle.recipeAddButtonTextStyle}>
-              Add
-            </Text>
-          </View>
-        </View>
-        <View style={RecipeSearchStyle.recipeBodyContainerStyle}>
-          <Image
-            source={{ uri: recipe.image }}
-            style={RecipeSearchStyle.recipeImageStyle}
-          />
-          <View style={RecipeSearchStyle.recipeSummaryContainerStyle}>
-            <Text
-              style={RecipeSearchStyle.recipeSummaryTextStyle}
-              numberOfLines={2}
-            >
-              {recipe.summary?.replace(/<[^>]+>/g, '')}
-            </Text>
-            <View>
-              <View style={RecipeSearchStyle.recipeSummaryIconsContainerStyle}>
-                <View style={RecipeSearchStyle.recipeSummaryIconContainerStyle}>
-                  <TimerIconComponent size={16} color={'black'} />
-                  <View style={RecipeSearchStyle.recipeSummaryIconTextsContainerStyle}>
-                    <Text>Ready in </Text>
-                    <Text style={{ fontWeight: 'bold' }}>
-                      {recipe.readyInMinutes} minutes
-                    </Text>
-                  </View>
-                </View>
-              </View>
-              <View style={RecipeSearchStyle.recipeSummaryIconsContainerStyle}>
-                <View style={RecipeSearchStyle.recipeSummaryIconTextsContainerStyle}>
-                  <SoupIconComponent size={16} color={'black'} />
-                  <Text style={{ fontWeight: 'bold', marginLeft: 5 }}>
-                    {recipe.servings}
-                  </Text>
-                  <Text> servings</Text>
-                </View>
-                <View style={RecipeSearchStyle.recipeSummaryIconTextsContainerStyle}>
-                  <PiggyBankIconComponent size={16} color={'darkseagreen'} />
-                  <Text style={{ fontWeight: 'bold', marginLeft: 5 }}>
-                    ${recipe.pricePerServing?.toFixed(2)}
-                  </Text>
-                  <Text> per serving</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
-        <View style={RecipeSearchStyle.recipeFooterIconsContainerStyle}>
-          <View style={RecipeSearchStyle.recipeFooterIconContainerStyle}>
-            <FlameIconComponent size={16} color={'salmon'} />
-            <View>
-              <Text style={{ fontWeight: 'bold' }}>
-                {Math.round(calories?.amount ?? 0)} kcal
-              </Text>
-              <Text>per serving</Text>
-            </View>
-          </View>
-          <View style={RecipeSearchStyle.recipeFooterIconContainerStyle}>
-            <BeefIconComponent size={16} color={'firebrick'} />
-            <View>
-              <Text style={{ fontWeight: 'bold' }}>
-                {protein?.amount?.toFixed(1)}g
-              </Text>
-              <Text>of protein</Text>
-            </View>
-          </View>
-          <View style={RecipeSearchStyle.recipeFooterIconContainerStyle}>
-            <WheatIconComponent size={16} color={'goldenrod'} />
-            <View>
-              <Text style={{ fontWeight: 'bold' }}>
-                {carbs?.amount?.toFixed(1)}g
-              </Text>
-              <Text>of carbs</Text>
-            </View>
-          </View>
-          <View style={RecipeSearchStyle.recipeFooterIconContainerStyle}>
-            <HamburgerIconComponent size={16} color={'darkorange'} />
-            <View>
-              <Text style={{ fontWeight: 'bold' }}>
-                {fat?.amount?.toFixed(1)}g
-              </Text>
-              <Text>of fat</Text>
-            </View>
-          </View>
-        </View>
-        <View style={RecipeSearchStyle.recipeFooterButtonsContainerStyle}>
-          <TouchableOpacity style={RecipeSearchStyle.recipeInstructionsButtonContainerStyle}>
-            <BookIconComponent size={24} color={'white'} />
-            <Text
-              onPress={() => navigation.navigate('Recipe Instructions & Nutrition', { recipe })}
-              style={RecipeSearchStyle.recipeInstructionsButtonTextStyle}>
-              Instructions
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={RecipeSearchStyle.recipeNutritionButtonContainerStyle}>
-            <ChartColumnIncreasingIconComponent size={24} color={'white'} />
-            <Text
-              onPress={() => navigation.navigate('Recipe Instructions & Nutrition', { recipe })}
-              style={RecipeSearchStyle.recipeNutritionButtonTextStyle}
-            >
-              Nutrition
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  }
-
   return (
-    <View style={RecipeSearchStyle.screenStyle}>
-      <View style={RecipeSearchStyle.searchBarContainerStyle}>
-        <View style={RecipeSearchStyle.searchBarTextInputContainerStyle}>
-          <SearchIconComponent size={24} color='black' />
+    <View style={styles.screen}>
+      <View style={styles.searchBarContainer}>
+        <View style={styles.searchBarTextInputContainer}>
+          <Icon name='Search' color='black' size={24} />
           <TextInput
-            style={RecipeSearchStyle.searchBarTextInputStyle}
+            style={styles.searchBarTextInput}
             placeholder='Search recipe...'
             value={search}
             onChangeText={setSearch}
@@ -230,15 +91,15 @@ const RecipeSearchScreen = () => {
           />
           {search.length > 0 && (
             <TouchableOpacity onPress={handleClearSearchBar}>
-              <XIconComponent size={24} color='black' />
+              <Icon name='X' color='black' size={24} />
             </TouchableOpacity>
           )}
         </View>
       </View>
-      <ScrollView style={RecipeSearchStyle.recipeSearchResultsScrollViewStyle}>
-        <View style={RecipeSearchStyle.recipeSearchResultsContainerStyle}>
+      <ScrollView style={styles.recipeResultsScrollView}>
+        <View style={styles.recipeResultsContainer}>
           {searchRecipes.map(recipe => (
-            <RecipeComponent key={recipe.id} recipe={recipe} />
+            <RecipeCard key={recipe.id} recipe={recipe} toggleMealButton='Add' />
           ))}
         </View>
       </ScrollView>
@@ -246,173 +107,40 @@ const RecipeSearchScreen = () => {
   );
 };
 
-const SEARCH_ICON_SIZE = 24;
-
-const RecipeSearchStyle = StyleSheet.create({
-  screenStyle: {
+const styles = StyleSheet.create({
+  // Main
+  screen: {
     flexGrow: 1,
-    backgroundColor: 'white'
+    backgroundColor: Colors.background,
+    marginBottom: Spacing.xxl * 2
   },
-  searchBarContainerStyle: {
-    backgroundColor: '#90BE6D',
+  // Search Bar
+  searchBarContainer: {
+    backgroundColor: Colors.primary
   },
-  searchBarTextInputContainerStyle: {
+  searchBarTextInputContainer: {
     flexDirection: 'row',
-    backgroundColor: 'white',
+    backgroundColor: Colors.background,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 10,
-    padding: 10,
-    borderColor: 'dimgray',
+    margin: Spacing.sm,
+    padding: Spacing.sm,
+    borderColor: Colors.onPrimary,
     borderWidth: 1,
-    borderRadius: 100,
+    borderRadius: Radius.round
   },
-  searchBarTextInputStyle: {
+  searchBarTextInput: {
     flex: 1,
-    marginLeft: 5,
-    marginRight: 5
+    marginLeft: Spacing.xs,
+    marginRight: Spacing.xs
   },
-  recipeSearchResultsScrollViewStyle: {
-    flexGrow: 1,
-    backgroundColor: 'white'
+  // Recipe Results
+  recipeResultsScrollView: {
+    flexGrow: 1
   },
-  recipeSearchResultsContainerStyle: {
-    padding: 10,
+  recipeResultsContainer: {
+    padding: Spacing.sm
   },
-  recipeSearchResultContainerStyle: {
-    flex: 1,
-    backgroundColor: 'whitesmoke',
-    marginBottom: 20,
-    padding: 10,
-    borderRadius: 10,
-  },
-  recipeHeaderContainerStyle: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10
-  },
-  recipeTitleContainerStyle: {
-    flexDirection: 'row',
-    width: 100,
-    alignItems: 'center',
-    gap: 10
-  },
-  recipeTitleStyle: {
-    fontWeight: 'bold'
-  },
-  recipeLikesContainerStyle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    gap: 5,
-    borderRadius: 10
-  },
-  recipeLikesTextStyle: {
-    color: 'black'
-  },
-  recipeSaveContainerStyle: {
-    flexDirection: 'row',
-    backgroundColor: 'tomato',
-    alignItems: 'center',
-    padding: 10,
-    gap: 5,
-    borderRadius: 10
-  },
-  recipeSaveTextStyle: {
-    color: 'white'
-  },
-  recipeAddButtonContainerStyle: {
-    flexDirection: 'row',
-    backgroundColor: '#90BE6D',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 10,
-    gap: 5,
-    borderRadius: 10
-  },
-  recipeAddButtonTextStyle: {
-    color: 'white'
-  },
-  recipeBodyContainerStyle: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 20,
-    gap: 10
-  },
-  recipeImageStyle: {
-    width: 100,
-    height: 100,
-    borderRadius: 20
-  },
-  recipeSummaryContainerStyle: {
-    flex: 1,
-    flexShrink: 1,
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    gap: 10,
-  },
-  recipeSummaryTextStyle: {
-    flex: 1,
-  },
-  recipeSummaryIconsContainerStyle: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    marginTop: 10,
-    gap: 10,
-  },
-  recipeSummaryIconContainerStyle: {
-    flexDirection: 'row',
-    gap: 5
-  },
-  recipeSummaryIconTextsContainerStyle: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  recipeSummaryIconTextStyle: {
-    flexDirection: 'row',
-    marginBottom: 10
-  },
-  recipeFooterIconsContainerStyle: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 10
-  },
-  recipeFooterIconContainerStyle: {
-    flexDirection: 'row',
-    gap: 5
-  },
-  recipeFooterButtonsContainerStyle: {
-    flexDirection: 'row',
-    gap: 10
-  },
-  recipeInstructionsButtonContainerStyle: {
-    flex: 1,
-    flexDirection: 'row',
-    backgroundColor: '#90BE6D',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 10,
-    gap: 5,
-    borderRadius: 10,
-  },
-  recipeInstructionsButtonTextStyle: {
-    color: 'white'
-  },
-  recipeNutritionButtonContainerStyle: {
-    flex: 1,
-    flexDirection: 'row',
-    backgroundColor: '#90BE6D',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 10,
-    gap: 5,
-    borderRadius: 10,
-  },
-  recipeNutritionButtonTextStyle: {
-    color: 'white'
-  }
 });
 
 export default RecipeSearchScreen;

@@ -9,6 +9,11 @@ import ShoppingListScreen from "../screens/ShoppingListScreen";
 import UserPreferencesScreen from "../screens/UserGoalsAndPreferencesScreen";
 import AskAIScreen from '../screens/AskAIScreen';
 
+import Icon from '../components/icons/Icon';
+import { Colors } from '../styles/themes/colors';
+import { Spacing } from '../styles/themes/spacing';
+import { Radius } from '../styles/themes/radius';
+
 import {
     Calendar,
     ShoppingCart,
@@ -21,6 +26,37 @@ import { useAuthContext } from '../contexts/AuthContext';
 
 import UserGoalsAndPreferencesScreen from '../screens/UserGoalsAndPreferencesScreen';
 import RecipeInstructionsAndNutritionScreen from '../screens/RecipeInstructionsAndNutrition';
+
+const MealPlanStack = createNativeStackNavigator();
+
+function MealPlanStackNavigator() {
+    return (
+        <MealPlanStack.Navigator
+            initialRouteName='Meal Plan'
+        >
+            <MealPlanStack.Screen
+                name='Meal Plan'
+                component={MealPlanScreen}
+                options={{
+                    headerTintColor: 'white',
+                    headerTitleAlign: 'center',
+                    headerShadowVisible: false,
+                    headerStyle: bottomTabsStyles.headerStyle,
+                }}
+            />
+            <MealPlanStack.Screen
+                name='Recipe Instructions & Nutrition'
+                component={RecipeInstructionsAndNutritionScreen}
+                options={{
+                    headerTintColor: 'white',
+                    headerTitleAlign: 'center',
+                    headerShadowVisible: false,
+                    headerStyle: bottomTabsStyles.headerStyle,
+                }}
+            />
+        </MealPlanStack.Navigator>
+    );
+};
 
 const HomeStack = createNativeStackNavigator();
 
@@ -63,7 +99,6 @@ function HomeStackNavigator() {
                         </TouchableOpacity>
                     )
                 }}
-
             />
             <HomeStack.Screen
                 name='Goals & Preferences'
@@ -75,6 +110,8 @@ function HomeStackNavigator() {
                     headerStyle: bottomTabsStyles.headerStyle,
                 }}
             />
+
+
         </HomeStack.Navigator>
     );
 };
@@ -149,7 +186,7 @@ function BottomTabsNavigator() {
         >
             <Tab.Screen
                 name="Meal Plan"
-                component={MealPlanScreen}
+                component={MealPlanStackNavigator}
             />
             <Tab.Screen
                 name="Shopping List"
@@ -173,7 +210,7 @@ function BottomTabsNavigator() {
 
 const bottomTabsStyles = StyleSheet.create({
     tabBarStyle: {
-        backgroundColor: '#90BE6D',
+        backgroundColor: Colors.primary,
         borderTopWidth: 0,
         height: 90
     },
@@ -181,7 +218,7 @@ const bottomTabsStyles = StyleSheet.create({
         paddingTop: 10,
     },
     headerStyle: {
-        backgroundColor: '#90BE6D',
+        backgroundColor: Colors.primary,
         borderBottomWidth: 0,
         shadowColor: 'transparent',
         shadowOpacity: 0,

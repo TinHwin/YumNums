@@ -74,8 +74,9 @@ export interface Recipe {
 }
 
 export interface RecipeContextType {
-    savedRecipes: Recipe[];
-
-    setSavedRecipes: React.Dispatch<React.SetStateAction<Recipe[]>>;
+    plannedRecipes: Recipe[];
+    setPlannedRecipes: React.Dispatch<React.SetStateAction<Recipe[]>>;
+    
+    addRecipe: (recipe: Recipe) => void;
     fetchComplexSearchRecipes: (search: string) => Promise<Recipe[] | void>;
 }

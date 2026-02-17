@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, Image, StyleSheet } from 'react-native';
 
 import SwitchSelector from 'react-native-switch-selector';
+import * as Progress from 'react-native-progress';
+
 import { auth } from '../firebase/firebaseConfig';
 
 import { Dimensions } from 'react-native';
@@ -21,7 +23,7 @@ import {
     Hamburger,
     ImageIcon,
 } from 'lucide-react-native';
-import { AnalyzedInstructions, Nutrition } from '../types/RecipeContextType';
+import { AnalyzedInstructions, Nutrition, Recipe } from '../types/RecipeContextType';
 
 const window = Dimensions.get('window');
 const ratio = window.width / 100;
@@ -120,12 +122,52 @@ const RecipeInstructionsComponent = ({
     );
 };
 
-const RecipeNutritionsComponent = ({ nutrition }: { nutrition: Nutrition }) => {
+const RecipeNutritionsComponent = ({ recipe }: { recipe: Recipe }) => {
+    let SoupIconComponent = Soup;
+    let TimerIconComponent = Timer;
+
+    const calories = recipe.nutrition?.nutrients?.find(nutrient => nutrient.name === 'Calories');
+    const protein = recipe.nutrition?.nutrients?.find(nutrient => nutrient.name === 'Protein');
+    const carbs = recipe.nutrition?.nutrients?.find(nutrient => nutrient.name === 'Carbohydrates');
+    const fat = recipe.nutrition?.nutrients?.find(nutrient => nutrient.name === 'Fat');
+
     return (
         <View>
-            <Text>
-                Nutrition
-            </Text>
+            <View style={RecipeInstructionsAndNutritionStyle.recipeNutritionMainMacrosContainerStyle}>
+                <View style={RecipeInstructionsAndNutritionStyle.recipeNutritionMainMarcosIconsContainerStyle}>
+                    <View style={RecipeInstructionsAndNutritionStyle.recipeNutritionMarcosIconContainerStyle}>
+                        <TimerIconComponent size={24} color={'black'} />
+                        <Text>{calories?.amount ?? 0} kcal</Text>
+                    </View>
+                    <View style={RecipeInstructionsAndNutritionStyle.recipeNutritionMarcosIconContainerStyle}>
+                        <TimerIconComponent size={24} color={'black'} />
+                        <Text>{protein?.amount ?? 0}g of protein</Text>
+                    </View>
+                </View>
+                <View style={RecipeInstructionsAndNutritionStyle.recipeNutritionMainMarcosIconsContainerStyle}>
+                    <View style={RecipeInstructionsAndNutritionStyle.recipeNutritionMarcosIconContainerStyle}>
+                        <TimerIconComponent size={24} color={'black'} />
+                        <Text>{carbs?.amount ?? 0}g of carbs</Text>
+                    </View>
+                    <View style={RecipeInstructionsAndNutritionStyle.recipeNutritionMarcosIconContainerStyle}>
+                        <SoupIconComponent size={24} color={'black'} />
+                        <Text>{fat?.amount ?? 0}g of fat</Text>
+                    </View>
+                </View>
+            </View>
+            <View>
+                {recipe.nutrition.nutrients.map(nutrient => 
+                    <View>
+                        <Text>
+                            {nutrient.name}
+                        </Text>
+                        <Text>
+                            {nutrient.amount}{nutrient.unit}
+                        </Text>
+                        <Progress.Bar progress={nutrient.percentOfDailyNeeds / 100} width={100} />
+                    </View>
+                )}
+            </View>
         </View>
     );
 };
@@ -214,7 +256,7 @@ const RecipeInstructionsAndNutritionScreen = ({ route }) => {
             </View>
             <View>
                 {selectedRecipeInfo === 'instructions' && <RecipeInstructionsComponent nutrition={recipe.nutrition} analyzedInstructions={recipe.analyzedInstructions} />}
-                {selectedRecipeInfo === 'nutrition' && <RecipeNutritionsComponent nutrition={recipe.nutrition} />}
+                {selectedRecipeInfo === 'nutrition' && <RecipeNutritionsComponent recipe={recipe} />}
             </View>
         </ScrollView>
     );
@@ -355,7 +397,37 @@ const RecipeInstructionsAndNutritionStyle = StyleSheet.create({
     },
     switchOperatorStyle: {
         margin: 10,
-    }
+    },
+
+
+    // Nutrition Styles
+    recipeNutritionContainerStyle: {
+        gap: 10,
+        margin: 10,
+        borderRadius: 10
+    },
+    recipeNutritionMainMacrosContainerStyle: {
+        flexDirection: 'column',
+        marginBottom: 20,
+        padding: 10,
+        gap: 10,
+        borderWidth: 0.5,
+        borderTopWidth: 10,
+        borderTopColor: '#90BE6D',
+        borderColor: '#90BE6D',
+        borderRadius: 10,
+    },
+    recipeNutritionMainMarcosIconsContainerStyle: {
+        flexDirection: 'row',
+    },
+    recipeNutritionMarcosIconContainerStyle: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
+    },
+    recipeNutritionMarcosIconTitleStyle: {
+        fontWeight: 'bold'
+    },
 });
 
 export default RecipeInstructionsAndNutritionScreen;

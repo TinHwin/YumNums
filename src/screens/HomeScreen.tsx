@@ -1,6 +1,6 @@
 import React from 'react';
-import { 
-    View, 
+import {
+    View,
     Text,
     ScrollView,
     StyleSheet,
@@ -14,10 +14,12 @@ import {
     Settings,
 } from 'lucide-react-native';
 
+import { Agenda } from 'react-native-calendars';
 import PieChart from 'react-native-pie-chart';
 
 import { useAuthContext } from '../contexts/AuthContext';
 import { useUserGoalsAndPreferencesContext } from '../contexts/UserGoalsAndPreferencesContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = () => {
     const navigation = useNavigation()
@@ -26,16 +28,37 @@ const HomeScreen = () => {
     const { user, loading } = useAuthContext();
 
     const todayBudgetSeries = [
-        { value: 12, color: '#fbd203'},
-        { value: 24, color: '#ffb300'},
-        { value: 15, color: '#ff9100'},
+        { value: 12, color: '#fbd203' },
+        { value: 24, color: '#ffb300' },
+        { value: 15, color: '#ff9100' },
     ]
+
+    const todayDate = new Date();
+    const lastWeekDate = new Date(todayDate);
+    lastWeekDate.setDate(todayDate.getDate() - 7);
+    const nextWeekDate = new Date(todayDate);
+    nextWeekDate.setDate(todayDate.getDate() + 7);
+
+    const formatDate = (date: Date) =>
+        date.toISOString().split('T')[0];
+
+    const minDate = formatDate(lastWeekDate);
+    const maxDate = formatDate(nextWeekDate);
+
+    const clearEverything = async () => {
+        try {
+            await AsyncStorage.removeItem('plannedRecipes');
+            await AsyncStorage.removeItem('mealPlan');
+        } catch (error) {
+
+        }
+    };
 
     return (
         <ScrollView style={homeStyles.screenStyle}>
             <View style={homeStyles.profileContainer}>
                 {user?.photoURL && (
-                    <Image 
+                    <Image
                         source={{ uri: user?.photoURL }}
                         style={homeStyles.profileImageStyle}
                     />
@@ -49,7 +72,7 @@ const HomeScreen = () => {
                     <Text
                         style={homeStyles.profileTextStyle}
                     >
-                        { user?.displayName }
+                        {user?.displayName}
                     </Text>
                     <TouchableOpacity
                         onPress={() => navigation.navigate('Goals & Preferences')}
@@ -62,10 +85,16 @@ const HomeScreen = () => {
                     </TouchableOpacity>
                 </View>
             </View>
+
             <View style={homeStyles.todayBudgetAndCaloriesContainerStyle}>
-                <PieChart widthAndHeight={140} series={todayBudgetSeries}/>
-                <PieChart widthAndHeight={140} series={todayBudgetSeries}/>
+                <PieChart widthAndHeight={140} series={todayBudgetSeries} />
+                <PieChart widthAndHeight={140} series={todayBudgetSeries} />
             </View>
+            <TouchableOpacity
+                onPress={() => clearEverything()}
+            >
+                <Text>REMOVE</Text>
+            </TouchableOpacity>
         </ScrollView>
     );
 };
